@@ -1,5 +1,6 @@
 bin_PROGRAMS=gtwupload
-gtwupload_SOURCES=FTPClient.cpp FtpAgent.cpp MessageQueue.cpp GLog.cpp gtwupload.cpp
+gtwupload_SOURCES=FTPClient.cpp FtpAgent.cpp GLog.cpp \
+                  daemon.cpp gtwupload.cpp
 
 if DEBUG
   AM_CFLAGS = -g3 -O0 -Wall -DNDEBUG
@@ -10,11 +11,12 @@ else
 endif
 
 gtwupload_LDFLAGS = -L/usr/local/lib
-BOOST_LIBS = -lboost_system-mt -lboost_date_time-mt -lboost_filesystem-mt -lboost_chrono -lboost_regex-mt
-gtwupload_LDADD = ${BOOST_LIBS} -lpthread 
+BOOST_LIBS_OSX   = -lboost_system-mt -lboost_date_time-mt -lboost_filesystem-mt -lboost_chrono -lboost_regex-mt -lboost_thread-mt
+BOOST_LIBS_LINUX = -lboost_system-mt-x64 -lboost_date_time-mt-x64 -lboost_filesystem-mt-x64 -lboost_chrono-mt-x64 -lboost_regex-mt-x64 -lboost_thread-mt-x64
+gtwupload_LDADD = -lpthread 
 if LINUX
-gtwupload_LDADD += -lboost_thread -lrt
+gtwupload_LDADD += ${BOOST_LIBS_LINUX} -lrt
 endif
 if OSX
-gtwupload_LDADD += -lboost_thread-mt
+gtwupload_LDADD += ${BOOST_LIBS_OSX}
 endif

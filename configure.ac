@@ -52,10 +52,14 @@ esac],
 
 AM_CONDITIONAL(DEBUG, test x"$debug" = x"true")
 
-AC_TYPE_UINT32_T
 AC_CHECK_HEADER_STDBOOL
-AC_CHECK_HEADERS([unistd.h sys/param.h])
-AC_CHECK_FUNCS([getcwd mkdir])
+AC_CHECK_HEADERS([unistd.h fcntl.h syslog.h sys/param.h])
+AC_CHECK_FUNCS([getcwd mkdir ftruncate])
+AC_FUNC_FORK
+AC_TYPE_OFF_T
+AC_TYPE_PID_T
+AC_TYPE_SIZE_T
+AC_TYPE_UINT32_T
 
 AC_CONFIG_FILES(Makefile src/Makefile)
 AC_OUTPUT

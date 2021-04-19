@@ -90,8 +90,8 @@ build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
 bin_PROGRAMS = gtwupload$(EXEEXT)
-@LINUX_TRUE@am__append_1 = -lboost_thread -lrt
-@OSX_TRUE@am__append_2 = -lboost_thread-mt
+@LINUX_TRUE@am__append_1 = ${BOOST_LIBS_LINUX} -lrt
+@OSX_TRUE@am__append_2 = ${BOOST_LIBS_OSX}
 subdir = src
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -104,11 +104,13 @@ CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_gtwupload_OBJECTS = FTPClient.$(OBJEXT) FtpAgent.$(OBJEXT) \
-	MessageQueue.$(OBJEXT) GLog.$(OBJEXT) gtwupload.$(OBJEXT)
+	MessageQueue.$(OBJEXT) GLog.$(OBJEXT) daemon.$(OBJEXT) \
+	gtwupload.$(OBJEXT)
 gtwupload_OBJECTS = $(am_gtwupload_OBJECTS)
 am__DEPENDENCIES_1 =
-gtwupload_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1)
+@LINUX_TRUE@am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1)
+@OSX_TRUE@am__DEPENDENCIES_3 = $(am__DEPENDENCIES_1)
+gtwupload_DEPENDENCIES = $(am__DEPENDENCIES_2) $(am__DEPENDENCIES_3)
 gtwupload_LINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) \
 	$(gtwupload_LDFLAGS) $(LDFLAGS) -o $@
 AM_V_P = $(am__v_P_@AM_V@)
@@ -128,7 +130,7 @@ depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = ./$(DEPDIR)/FTPClient.Po ./$(DEPDIR)/FtpAgent.Po \
 	./$(DEPDIR)/GLog.Po ./$(DEPDIR)/MessageQueue.Po \
-	./$(DEPDIR)/gtwupload.Po
+	./$(DEPDIR)/daemon.Po ./$(DEPDIR)/gtwupload.Po
 am__mv = mv -f
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -272,15 +274,17 @@ target_vendor = @target_vendor@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-gtwupload_SOURCES = FTPClient.cpp FtpAgent.cpp MessageQueue.cpp GLog.cpp gtwupload.cpp
+gtwupload_SOURCES = FTPClient.cpp FtpAgent.cpp MessageQueue.cpp GLog.cpp \
+                  daemon.cpp gtwupload.cpp
+
 @DEBUG_FALSE@AM_CFLAGS = -O3 -Wall
 @DEBUG_TRUE@AM_CFLAGS = -g3 -O0 -Wall -DNDEBUG
 @DEBUG_FALSE@AM_CXXFLAGS = -O3 -Wall
 @DEBUG_TRUE@AM_CXXFLAGS = -g3 -O0 -Wall -DNDEBUG
 gtwupload_LDFLAGS = -L/usr/local/lib
-BOOST_LIBS = -lboost_system-mt -lboost_date_time-mt -lboost_filesystem-mt -lboost_chrono -lboost_regex-mt
-gtwupload_LDADD = ${BOOST_LIBS} -lpthread $(am__append_1) \
-	$(am__append_2)
+BOOST_LIBS_OSX = -lboost_system-mt -lboost_date_time-mt -lboost_filesystem-mt -lboost_chrono -lboost_regex-mt -lboost_thread-mt
+BOOST_LIBS_LINUX = -lboost_system-mt-x64 -lboost_date_time-mt-x64 -lboost_filesystem-mt-x64 -lboost_chrono-mt-x64 -lboost_regex-mt-x64 -lboost_thread-mt-x64
+gtwupload_LDADD = -lpthread $(am__append_1) $(am__append_2)
 all: all-am
 
 .SUFFIXES:
@@ -371,6 +375,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FtpAgent.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GLog.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MessageQueue.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/daemon.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtwupload.Po@am__quote@ # am--include-marker
 
 $(am__depfiles_remade):
@@ -524,6 +529,7 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/FtpAgent.Po
 	-rm -f ./$(DEPDIR)/GLog.Po
 	-rm -f ./$(DEPDIR)/MessageQueue.Po
+	-rm -f ./$(DEPDIR)/daemon.Po
 	-rm -f ./$(DEPDIR)/gtwupload.Po
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
@@ -574,6 +580,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/FtpAgent.Po
 	-rm -f ./$(DEPDIR)/GLog.Po
 	-rm -f ./$(DEPDIR)/MessageQueue.Po
+	-rm -f ./$(DEPDIR)/daemon.Po
 	-rm -f ./$(DEPDIR)/gtwupload.Po
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic

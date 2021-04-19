@@ -27,8 +27,13 @@
 #include <iostream>
 #include <stdio.h>
 #include <getopt.h>
+#include "daemon.h"
 #include "GLog.h"
 #include "Parameter.h"
+#include "FtpAgent.h"
+#include "FTPClient.h"
+
+#define DAEMON_NAME		"gtwupload"
 
 using namespace std;
 
@@ -45,9 +50,7 @@ void Usage() {
 	printf(" -h / --help    : print this help message\n");
 	printf(" -d / --default : generate default configuration file here\n");
 	printf(" -c / --config  : specify configuration file\n");
-	printf(" -Z / --zero    : combine bias images, result to be saved as ZERO.fits in WD\n");
-	printf(" -D / --dark    : combine dark images, result to be saved as DARK.fits in WD\n");
-	printf(" -F / --flat    : combine flat images, result to be saved as FLAT.fits in WD\n");
+	printf(" -s / --daemon  : run program as daemon\n");
 }
 
 int main(int argc, char** argv) {
@@ -85,7 +88,7 @@ int main(int argc, char** argv) {
 		case 's':
 			param = new Parameter;
 			if (!param->Load("/usr/local/etc/gtwupload.xml")) {
-				cout << "failed to load configuration file " <<  argv[optind - 1] << endl;
+				cout << "failed to load configuration file [/usr/local/etc/gtwupload.xml]" << endl;
 				return -3;
 			}
 			_gLog = new GLog("/var/log/gtwupload", "gtwupload_");
@@ -103,10 +106,52 @@ int main(int argc, char** argv) {
 	}
 
 	if (isDaemon) {// 启动服务
+		boost::asio::io_service ios;
+		boost::asio::signal_set signals(ios, SIGINT, SIGTERM);  // interrupt signal
+		signals.async_wait(boost::bind(&boost::asio::io_service::stop, &ios));
 
+		if (!MakeItDaemon(ios)) return 1;
+		if (!isProcSingleton("/var/run/gtwupload.pid")) {
+			_gLog->Write("%s is already running or failed to access PID file", DAEMON_NAME);
+			return 2;
+		}
+
+		_gLog->Write("Try to launch %s %s as daemon", DAEMON_NAME, "v0.1");
+		// 主程序入口
+		FtpAgent agent;
+		if (agent.Start()) {
+			_gLog->Write("Daemon goes running");
+			ios.run();
+			agent.Stop();
+		}
+		else {
+			_gLog->Write(LOG_FAULT, "Fail to launch %s", DAEMON_NAME);
+		}
+		_gLog->Write("Daemon stopped");
 	}
 	else {// 立即尝试上传
-		_gLog = new GLog(stdout);
+		if (!param) {
+			param = new Parameter;
+			if (!(param->Load("gtwupload.xml") || param->Load("/usr/local/etc/gtwupload.xml"))) {
+				cout << "failed to load configuration file " << endl;
+				delete param;
+				param = NULL;
+			}
+		}
+		if (param) {
+			_gLog = new GLog(stdout);
+
+			FTPCliPtr ftpCli;
+			ftpCli.reset(new FTPClient(param->hostName, param->hostPort));
+			ftpCli->SetRemoteDIR(param->dirRemote);
+			if (ftpCli->TryConnect(param->account, "")) {
+				//...目录: 压缩后上传; 文件: 直接上传
+				for (int i = 0; i < argc; ++i)
+					ftpCli->UploadFile(string(argv[i]));
+			}
+
+			ftpCli.reset();
+		}
 	}
 
 	if (_gLog) delete _gLog;

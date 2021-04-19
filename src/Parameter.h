@@ -78,7 +78,6 @@ public:
 			return true;
 		}
 		catch(xml_parser_error &ex) {
-			Init(filepath);
 			return false;
 		}
 	}

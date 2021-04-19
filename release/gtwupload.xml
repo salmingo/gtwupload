@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <version>0.1</version>
 <date>2021-04-19T06:27:49</date>
-<FtpServer Name="" Port="20"/>
-<Account Name=""/>
+<FtpServer Name="172.28.1.11" Port="20"/>
+<Account Name="gwac"/>
 <Data>
     <Local Directory=""/>
-    <Remote Directory=""/>
+    <Remote Directory="/home/gwac/Public"/>
 </Data>
