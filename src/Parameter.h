@@ -12,8 +12,9 @@
 struct Parameter {
 public:
 	std::string hostName;	/// FTP服务器IP地址或DNS名称
-	int hostPort;			/// FTP服务器端口
+	std::string hostPort;	/// FTP服务器端口
 	std::string account;	/// 账号
+	std::string passwd;		/// 密码
 	std::string dirLocal;	/// 本地主机上的目录
 	std::string dirRemote;	/// 远程主机上的目录
 
@@ -33,10 +34,11 @@ public:
 
 		ptree& node1 = nodes.add("FtpServer", "");
 		node1.add("<xmlattr>.Name", "");
-		node1.add("<xmlattr>.Port", 20);
+		node1.add("<xmlattr>.Port", "21");
 
 		ptree& node2 = nodes.add("Account", "");
-		node2.add("<xmlattr>.Name", "");
+		node2.add("<xmlattr>.Name",     "");
+		node2.add("<xmlattr>.Password", "");
 
 		ptree& node3 = nodes.add("Data", "");
 		node3.add("Local.<xmlattr>.Directory", "");
@@ -64,10 +66,11 @@ public:
 			BOOST_FOREACH(ptree::value_type const &child, nodes.get_child("")) {
 				if (boost::iequals(child.first, "FtpServer")) {
 					hostName = child.second.get("<xmlattr>.Name",    "");
-					hostPort = child.second.get("<xmlattr>.Port",    20);
+					hostPort = child.second.get("<xmlattr>.Port",    "20");
 				}
 				else if (boost::iequals(child.first, "Account")) {
-					account = child.second.get("<xmlattr>.Name",    "");
+					account = child.second.get("<xmlattr>.Name",     "");
+					passwd  = child.second.get("<xmlattr>.Password", "");
 				}
 				else if (boost::iequals(child.first, "Data")) {
 					dirLocal  = child.second.get("Local.<xmlattr>.Directory",    "");

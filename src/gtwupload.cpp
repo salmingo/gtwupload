@@ -119,7 +119,7 @@ int main(int argc, char** argv) {
 		_gLog->Write("Try to launch %s %s as daemon", DAEMON_NAME, "v0.1");
 		// 主程序入口
 		FtpAgent agent;
-		if (agent.Start()) {
+		if (agent.Start(param)) {
 			_gLog->Write("Daemon goes running");
 			ios.run();
 			agent.Stop();
@@ -142,12 +142,14 @@ int main(int argc, char** argv) {
 			_gLog = new GLog(stdout);
 
 			FTPCliPtr ftpCli;
-			ftpCli.reset(new FTPClient(param->hostName, param->hostPort));
-			ftpCli->SetRemoteDIR(param->dirRemote);
-			if (ftpCli->TryConnect(param->account, "")) {
+			ftpCli.reset(new FTPClient(param->hostName, param->hostPort, param->account, param->passwd));
+			if (ftpCli->Connect()) {
+				ftpCli->SetRemoteDIR(param->dirRemote);
 				//...目录: 压缩后上传; 文件: 直接上传
 				for (int i = 0; i < argc; ++i)
 					ftpCli->UploadFile(string(argv[i]));
+
+				ftpCli->DisConnect();
 			}
 
 			ftpCli.reset();

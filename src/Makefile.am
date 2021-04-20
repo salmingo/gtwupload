@@ -1,5 +1,5 @@
 bin_PROGRAMS=gtwupload
-gtwupload_SOURCES=FTPClient.cpp FtpAgent.cpp GLog.cpp \
+gtwupload_SOURCES=FTPClient.cpp FtpAgent.cpp GLog.cpp AsioIOServiceKeep.cpp AsioTCP.cpp \
                   daemon.cpp gtwupload.cpp
 
 if DEBUG

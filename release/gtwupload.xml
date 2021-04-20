@@ -4,6 +4,6 @@
 <FtpServer Name="172.28.1.11" Port="20"/>
 <Account Name="gwac"/>
 <Data>
-    <Local Directory=""/>
+    <Local Directory="/Users/lxm/Data/output"/>
     <Remote Directory="/home/gwac/Public"/>
 </Data>
