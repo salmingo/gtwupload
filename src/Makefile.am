@@ -15,7 +15,7 @@ BOOST_LIBS_OSX   = -lboost_system-mt -lboost_date_time-mt -lboost_filesystem-mt 
 BOOST_LIBS_LINUX = -lboost_system-mt-x64 -lboost_date_time-mt-x64 -lboost_filesystem-mt-x64 -lboost_chrono-mt-x64 -lboost_regex-mt-x64 -lboost_thread-mt-x64
 gtwupload_LDADD = -lpthread 
 if LINUX
-gtwupload_LDADD += ${BOOST_LIBS_OSX} -lrt
+gtwupload_LDADD += ${BOOST_LIBS_LINUX} -lrt
 endif
 if OSX
 gtwupload_LDADD += ${BOOST_LIBS_OSX}

@@ -146,9 +146,9 @@ int main(int argc, char** argv) {
 
 			CFTPManager ftpCli;
 			string hostName = param->hostName + string(":") + param->hostPort;
-			if (ftpCli.login2Server(hostName)
-					|| ftpCli.inputUserName(param->account)
-					|| ftpCli.inputPassWord(param->passwd))
+			if (ftpCli.login2Server(hostName) < 0
+					|| ftpCli.inputUserName(param->account) <= 0
+					|| ftpCli.inputPassWord(param->passwd) <= 0)
 				_gLog->Write(LOG_FAULT, "failed to login FTP server: [%s@%s]",
 						param->account.c_str(), hostName.c_str());
 			else {

@@ -55,7 +55,6 @@ FTP_API CFTPManager::login2Server(const std::string &serverIP)
 
 	if (Connect(m_cmdSocket, m_strServerIP, m_nServerPort) < 0)
 	{
-
 		return -1;
 	}
 
@@ -798,7 +797,8 @@ FTP_API CFTPManager::downLoad(const std::string &strRemoteFile, const std::strin
 
 FTP_API CFTPManager::parseResponse(const std::string &str)
 {
-	assert(!str.empty());
+	if (str.empty())
+		return 0;
 
 	std::string strData = str.substr(0, 3);
 	unsigned int val = atoi(strData.c_str());

@@ -131,9 +131,9 @@ bool FtpAgent::upload_dir(LocalDIR& toUpload) {
 
 	if (exists(pathTgz)) {// 尝试上传
 		string hostName = param_->hostName + string(":") + param_->hostPort;
-		if (ftpCli_->login2Server(hostName)
-				|| ftpCli_->inputUserName(param_->account)
-				|| ftpCli_->inputPassWord(param_->passwd))
+		if (ftpCli_->login2Server(hostName) < 0
+				|| ftpCli_->inputUserName(param_->account) <= 0
+				|| ftpCli_->inputPassWord(param_->passwd) <= 0)
 			_gLog->Write(LOG_FAULT, "failed to login FTP server: [%s@%s]",
 					param_->account.c_str(), hostName.c_str());
 		else {
