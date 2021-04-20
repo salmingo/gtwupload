@@ -1,5 +1,5 @@
 bin_PROGRAMS=gtwupload
-gtwupload_SOURCES=FTPClient.cpp FtpAgent.cpp GLog.cpp AsioIOServiceKeep.cpp AsioTCP.cpp \
+gtwupload_SOURCES=FTPManager.cpp FtpAgent.cpp GLog.cpp  \
                   daemon.cpp gtwupload.cpp
 
 if DEBUG
@@ -15,7 +15,7 @@ BOOST_LIBS_OSX   = -lboost_system-mt -lboost_date_time-mt -lboost_filesystem-mt 
 BOOST_LIBS_LINUX = -lboost_system-mt-x64 -lboost_date_time-mt-x64 -lboost_filesystem-mt-x64 -lboost_chrono-mt-x64 -lboost_regex-mt-x64 -lboost_thread-mt-x64
 gtwupload_LDADD = -lpthread 
 if LINUX
-gtwupload_LDADD += ${BOOST_LIBS_LINUX} -lrt
+gtwupload_LDADD += ${BOOST_LIBS_OSX} -lrt
 endif
 if OSX
 gtwupload_LDADD += ${BOOST_LIBS_OSX}

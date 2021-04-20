@@ -5610,10 +5610,40 @@ then :
   printf "%s\n" "@%:@define HAVE_SYSLOG_H 1" >>confdefs.h
 
 fi
+ac_fn_c_check_header_compile "$LINENO" "netdb.h" "ac_cv_header_netdb_h" "$ac_includes_default"
+if test "x$ac_cv_header_netdb_h" = xyes
+then :
+  printf "%s\n" "@%:@define HAVE_NETDB_H 1" >>confdefs.h
+
+fi
 ac_fn_c_check_header_compile "$LINENO" "sys/param.h" "ac_cv_header_sys_param_h" "$ac_includes_default"
 if test "x$ac_cv_header_sys_param_h" = xyes
 then :
   printf "%s\n" "@%:@define HAVE_SYS_PARAM_H 1" >>confdefs.h
+
+fi
+ac_fn_c_check_header_compile "$LINENO" "arpa/inet.h" "ac_cv_header_arpa_inet_h" "$ac_includes_default"
+if test "x$ac_cv_header_arpa_inet_h" = xyes
+then :
+  printf "%s\n" "@%:@define HAVE_ARPA_INET_H 1" >>confdefs.h
+
+fi
+ac_fn_c_check_header_compile "$LINENO" "netinet/in.h" "ac_cv_header_netinet_in_h" "$ac_includes_default"
+if test "x$ac_cv_header_netinet_in_h" = xyes
+then :
+  printf "%s\n" "@%:@define HAVE_NETINET_IN_H 1" >>confdefs.h
+
+fi
+ac_fn_c_check_header_compile "$LINENO" "sys/ioctl.h" "ac_cv_header_sys_ioctl_h" "$ac_includes_default"
+if test "x$ac_cv_header_sys_ioctl_h" = xyes
+then :
+  printf "%s\n" "@%:@define HAVE_SYS_IOCTL_H 1" >>confdefs.h
+
+fi
+ac_fn_c_check_header_compile "$LINENO" "sys/socket.h" "ac_cv_header_sys_socket_h" "$ac_includes_default"
+if test "x$ac_cv_header_sys_socket_h" = xyes
+then :
+  printf "%s\n" "@%:@define HAVE_SYS_SOCKET_H 1" >>confdefs.h
 
 fi
 
@@ -5633,6 +5663,36 @@ ac_fn_c_check_func "$LINENO" "ftruncate" "ac_cv_func_ftruncate"
 if test "x$ac_cv_func_ftruncate" = xyes
 then :
   printf "%s\n" "@%:@define HAVE_FTRUNCATE 1" >>confdefs.h
+
+fi
+ac_fn_c_check_func "$LINENO" "bzero" "ac_cv_func_bzero"
+if test "x$ac_cv_func_bzero" = xyes
+then :
+  printf "%s\n" "@%:@define HAVE_BZERO 1" >>confdefs.h
+
+fi
+ac_fn_c_check_func "$LINENO" "inet_ntoa" "ac_cv_func_inet_ntoa"
+if test "x$ac_cv_func_inet_ntoa" = xyes
+then :
+  printf "%s\n" "@%:@define HAVE_INET_NTOA 1" >>confdefs.h
+
+fi
+ac_fn_c_check_func "$LINENO" "memset" "ac_cv_func_memset"
+if test "x$ac_cv_func_memset" = xyes
+then :
+  printf "%s\n" "@%:@define HAVE_MEMSET 1" >>confdefs.h
+
+fi
+ac_fn_c_check_func "$LINENO" "select" "ac_cv_func_select"
+if test "x$ac_cv_func_select" = xyes
+then :
+  printf "%s\n" "@%:@define HAVE_SELECT 1" >>confdefs.h
+
+fi
+ac_fn_c_check_func "$LINENO" "socket" "ac_cv_func_socket"
+if test "x$ac_cv_func_socket" = xyes
+then :
+  printf "%s\n" "@%:@define HAVE_SOCKET 1" >>confdefs.h
 
 fi
 
@@ -5957,6 +6017,16 @@ else $as_nop
 printf "%s\n" "@%:@define size_t unsigned int" >>confdefs.h
 
 fi
+
+ac_fn_c_find_uintX_t "$LINENO" "16" "ac_cv_c_uint16_t"
+case $ac_cv_c_uint16_t in #(
+  no|yes) ;; #(
+  *)
+    
+    
+printf "%s\n" "@%:@define uint16_t $ac_cv_c_uint16_t" >>confdefs.h
+;;
+  esac
 
 ac_fn_c_find_uintX_t "$LINENO" "32" "ac_cv_c_uint32_t"
 case $ac_cv_c_uint32_t in #(

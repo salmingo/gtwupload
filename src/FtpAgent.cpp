@@ -12,6 +12,7 @@
 #include "FtpAgent.h"
 #include "GLog.h"
 
+using namespace std;
 using namespace boost::placeholders;
 using namespace boost::filesystem;
 using namespace boost::posix_time;
@@ -26,9 +27,10 @@ FtpAgent::~FtpAgent() {
 
 bool FtpAgent::Start(Parameter* param) {
 	param_ = param;
-	ftpCli_ = FTPClient::Create(param_->hostName, param_->hostPort,
-			param_->account, param_->passwd);
-	ftpCli_->SetRemoteDIR(param_->dirRemote);
+//	ftpCli_ = FTPClient::Create(param_->hostName, param_->hostPort,
+//			param_->account, param_->passwd);
+//	ftpCli_->SetRemoteDIR(param_->dirRemote);
+	ftpCli_.reset(new CFTPManager);
 	thrd_cycle_.reset(new boost::thread(boost::bind(&FtpAgent::thread_cycle, this)));
 
 	return true;
@@ -39,7 +41,7 @@ void FtpAgent::Stop() {
 		thrd_cycle_->interrupt();
 		thrd_cycle_->join();
 	}
-	ftpCli_->DisConnect();
+//	ftpCli_->DisConnect();
 }
 
 void FtpAgent::thread_cycle() {
@@ -61,6 +63,7 @@ void FtpAgent::thread_cycle() {
 		}
 
 		success = true;
+
 		while (success && queSubDir_.size()) {// 尝试上传
 			LocalDIR& toUpload = queSubDir_.front();
 			if ((success = upload_dir(toUpload)))
@@ -127,7 +130,23 @@ bool FtpAgent::upload_dir(LocalDIR& toUpload) {
 	}
 
 	if (exists(pathTgz)) {// 尝试上传
-		return ftpCli_->UploadFile(toUpload.filePath);
+		string hostName = param_->hostName + string(":") + param_->hostPort;
+		if (ftpCli_->login2Server(hostName)
+				|| ftpCli_->inputUserName(param_->account)
+				|| ftpCli_->inputPassWord(param_->passwd))
+			_gLog->Write(LOG_FAULT, "failed to login FTP server: [%s@%s]",
+					param_->account.c_str(), hostName.c_str());
+		else {
+			ftpCli_->setTransferMode(CFTPManager::binary);
+			ftpCli_->Pasv();
+			if (param_->dirRemote.size()) ftpCli_->CD(param_->dirRemote);
+			_gLog->Write("try to upload file: %s", toUpload.fileName.c_str());
+			if (ftpCli_->Put(toUpload.fileName, toUpload.filePath))
+				_gLog->Write(LOG_FAULT, "upload failed");
+			else
+				_gLog->Write("upload succeed");
+			ftpCli_->quitServer();
+		}
 	}
 
 	return false;

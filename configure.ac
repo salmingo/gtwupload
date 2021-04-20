@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 
-AC_PREREQ([2.71])
+AC_PREREQ([2.6])
 AC_INIT([gtwupload],[1.0])
 
 
@@ -53,12 +53,13 @@ esac],
 AM_CONDITIONAL(DEBUG, test x"$debug" = x"true")
 
 AC_CHECK_HEADER_STDBOOL
-AC_CHECK_HEADERS([unistd.h fcntl.h syslog.h sys/param.h])
-AC_CHECK_FUNCS([getcwd mkdir ftruncate])
+AC_CHECK_HEADERS([unistd.h fcntl.h syslog.h netdb.h sys/param.h arpa/inet.h netinet/in.h sys/ioctl.h sys/socket.h])
+AC_CHECK_FUNCS([getcwd mkdir ftruncate bzero inet_ntoa memset select socket])
 AC_FUNC_FORK
 AC_TYPE_OFF_T
 AC_TYPE_PID_T
 AC_TYPE_SIZE_T
+AC_TYPE_UINT16_T
 AC_TYPE_UINT32_T
 
 AC_CONFIG_FILES(Makefile src/Makefile)

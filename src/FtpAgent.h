@@ -17,7 +17,8 @@
 #include <deque>
 #include <string>
 #include "Parameter.h"
-#include "FTPClient.h"
+//#include "FTPClient.h"
+#include "FTPManager.h"
 
 class FtpAgent {
 public:
@@ -33,10 +34,12 @@ protected:
 
 	using ThreadPtr = boost::shared_ptr<boost::thread>;	///< boost线程指针
 	using dequedir  = std::deque<LocalDIR>;	/// 待上传子目录名
+	using FTPCliPtr = boost::shared_ptr<CFTPManager>;
 
 protected:
 	Parameter* param_;	/// 配置参数
 	dequedir queSubDir_;/// 子目录集合
+//	FTPCliPtr ftpCli_;	/// FTP客户端
 	FTPCliPtr ftpCli_;	/// FTP客户端
 	ThreadPtr thrd_cycle_;		///< 周期线程, 定时检查并压缩目录、尝试上传
 

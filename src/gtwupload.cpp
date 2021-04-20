@@ -27,15 +27,18 @@
 #include <iostream>
 #include <stdio.h>
 #include <getopt.h>
+#include <boost/filesystem.hpp>
 #include "daemon.h"
 #include "GLog.h"
 #include "Parameter.h"
 #include "FtpAgent.h"
-#include "FTPClient.h"
+//#include "FTPClient.h"
+#include "FTPManager.h"
 
 #define DAEMON_NAME		"gtwupload"
 
 using namespace std;
+using namespace boost::filesystem;
 
 GLog* _gLog;		//< 工作日志
 
@@ -141,18 +144,28 @@ int main(int argc, char** argv) {
 		if (param) {
 			_gLog = new GLog(stdout);
 
-			FTPCliPtr ftpCli;
-			ftpCli.reset(new FTPClient(param->hostName, param->hostPort, param->account, param->passwd));
-			if (ftpCli->Connect()) {
-				ftpCli->SetRemoteDIR(param->dirRemote);
-				//...目录: 压缩后上传; 文件: 直接上传
-				for (int i = 0; i < argc; ++i)
-					ftpCli->UploadFile(string(argv[i]));
-
-				ftpCli->DisConnect();
+			CFTPManager ftpCli;
+			string hostName = param->hostName + string(":") + param->hostPort;
+			if (ftpCli.login2Server(hostName)
+					|| ftpCli.inputUserName(param->account)
+					|| ftpCli.inputPassWord(param->passwd))
+				_gLog->Write(LOG_FAULT, "failed to login FTP server: [%s@%s]",
+						param->account.c_str(), hostName.c_str());
+			else {
+				ftpCli.setTransferMode(CFTPManager::binary);
+				ftpCli.Pasv();
+				if (param->dirRemote.size()) ftpCli.CD(param->dirRemote);
+				for (int i = 0; i < argc; ++i) {
+					path filepath = argv[i];
+					string filename = filepath.filename().string();
+					_gLog->Write("try to upload file: %s", filepath.c_str());
+					if (ftpCli.Put(filename, filepath.string()))
+						_gLog->Write(LOG_FAULT, "upload failed");
+					else
+						_gLog->Write("upload succeed");
+				}
+				ftpCli.quitServer();
 			}
-
-			ftpCli.reset();
 		}
 	}
 
